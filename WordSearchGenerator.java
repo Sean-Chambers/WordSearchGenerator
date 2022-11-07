@@ -15,6 +15,7 @@ public class WordSearchGenerator {
         Scanner scan = new Scanner(System.in);
         String input;
         ArrayList<String> list;
+        boolean loop = true;
         do{
             printIntro();
             input = scan.nextLine();
@@ -29,22 +30,26 @@ public class WordSearchGenerator {
                     generate(list);
                     System.out.print("Word Search has been generated!");
                     clearOnAcknowledge();
+                    break;
                 //calls the print method to print the word search 
                 case "p":
                     print();
                     clearOnAcknowledge();
+                    break;
                 //calls the showSolution method to print the word search with the solution visable
                 case "s":
                     showSolution();
                     clearOnAcknowledge();
+                    break;
                 case "q":
                     //this will close the loop as the while condition is evaluated false
-                    continue;
+                    loop = false;
+                    break;
                 default:
                     System.out.print("Sorry input is not recognized...");
                     clearOnAcknowledge();
             }
-        }while(input.toLowerCase() != "q");
+        }while(loop);
         scan.close();
     }
 
@@ -66,8 +71,7 @@ public class WordSearchGenerator {
         //adds each word to solution array
         for(String word : wordList){
             addWord(word);
-        }
-        wordSearch = solution; 
+        } 
         //i is the iterator for each row
         for(int i = 0; i < size; i++){
             //j is the iterator for each collumn
@@ -120,6 +124,7 @@ public class WordSearchGenerator {
                             solution[col][row++] = Character.toUpperCase(c);
                         }
                     }
+                    break;
                 //this case the word is left to right
                 case 1: 
                     row = ran.nextInt(size);
@@ -129,6 +134,7 @@ public class WordSearchGenerator {
                             solution[col++][row] = Character.toUpperCase(c);
                         }
                     }
+                    break;
                 //this case the word is diagonal
                 case 2:  
                     //this constrains the row so it can be be no lower than needed if the word is on the longest diagonal
@@ -139,6 +145,7 @@ public class WordSearchGenerator {
                             solution[col++][row++] = Character.toUpperCase(c);
                         }
                     }
+                    break;
                 //if dir fails to become a valid direction continue for loop and retry
                 default:
                     continue;
@@ -156,10 +163,10 @@ public class WordSearchGenerator {
                     char currentChar = solution[col][row++];
                     //checks if current value in array is the same as what letter we want to put there
                     if(currentChar == Character.toUpperCase(c)){
-                        continue;
+                        break;
                     //checks if current value in array is empty space
-                    } else if(currentChar < 'A' || currentChar > 'Z'){
-                        continue;
+                    } else if(currentChar < 'A' && currentChar > 'Z'){
+                        break;
                     //returns false if current character is a placed value that is not the same as what we want
                     } else {
                         return false;
@@ -172,7 +179,7 @@ public class WordSearchGenerator {
                     char currentChar = solution[col++][row];
                     if(currentChar == Character.toUpperCase(c)){
                         continue;
-                    } else if(currentChar < 'A' || currentChar > 'Z'){
+                    } else if(currentChar < 'A' && currentChar > 'Z'){
                         continue;
                     } else {
                         return false;
@@ -185,7 +192,7 @@ public class WordSearchGenerator {
                     char currentChar = solution[col++][row++];
                     if(currentChar == Character.toUpperCase(c)){
                         continue;
-                    } else if(currentChar < 'A' || currentChar > 'Z'){
+                    } else if(currentChar < 'A' && currentChar > 'Z'){
                         continue;
                     } else {
                         return false;
@@ -217,7 +224,7 @@ public class WordSearchGenerator {
             //j is the iterator for each collumn
             for(int j = 0; j < size; j++){
                 //prints character if it is part of solution else prints "[x]"
-                if(solution[j][i] <= 'Z' || solution[j][i] >= 'A'){
+                if(solution[j][i] <= 'Z' && solution[j][i] >= 'A'){
                     System.out.print("[" + solution[j][i] + "]");
                 } else {
                     System.out.print("[X]");
