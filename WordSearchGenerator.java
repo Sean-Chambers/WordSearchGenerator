@@ -83,9 +83,9 @@ public class WordSearchGenerator {
     //prompts user for number of words in word search
     //then accepts words until word count reached
     private static ArrayList<String> acceptWords(){
-        ArrayList<String> words = new ArrayList<String>();
         System.out.print("How many words would you like to add? ");
         int max = scan.nextInt();
+        ArrayList<String> words = new ArrayList<String>(max);
         //clears out the scanner
         String input = scan.nextLine();
         for(int i = 0; i < max; i++){
@@ -217,7 +217,7 @@ public class WordSearchGenerator {
             //j is the iterator for each collumn
             for(int j = 0; j < size; j++){
                 //prints character if it is part of solution else prints "[x]"
-                if(solution[j][i] <= 'Z' || solution[j][i] >= 'A'){
+                if(solution[j][i] <= 'Z' && solution[j][i] >= 'A'){
                     System.out.print("[" + solution[j][i] + "]");
                 } else {
                     System.out.print("[X]");
@@ -229,19 +229,26 @@ public class WordSearchGenerator {
 
     //sorts a word into an already sorted array
     private static ArrayList<String> addSorted(ArrayList<String> list, String word){
+        System.out.println(list);
         //on first word being added for loop wont trigger
         if(list.isEmpty()){
             list.add(word);
         } else {
-            for(int i = 0; i < list.size(); i++){
+            //initalize variable so the size doesnt increase when adding words, causing infinite loop
+            int listSize = list.size();
+            for(int i = 0; i < listSize; i++){
                 //assumes every word before current element is longer than current element
                 if(list.get(i).length() < word.length()){
-                    //adds element inplace 
+                    //adds element inplace, shifts smaller words down one index
                     list.add(i, word);
+                    //break needed to prevent adding word multiple times
+                    break;
+                } else if(i < list.size()){
+                    list.add(word);
                 }
             }
         }
-        return list; 
+        return list;
     }
 
     private static void clearOnAcknowledge(){
