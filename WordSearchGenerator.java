@@ -12,9 +12,17 @@ public class WordSearchGenerator {
     private static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) {
+        //constant that scales the size of the word search
+        final double scale = 1.5;
+        
+        //variable fields
         Scanner scan = new Scanner(System.in);
         String input;
         ArrayList<String> list;
+        boolean loop = true;
+        boolean generated = false;
+
+        //do while loop, controls the main menu functions
         do{
             printIntro();
             input = scan.nextLine();
@@ -22,32 +30,48 @@ public class WordSearchGenerator {
                 //generates the word search after accepting list of words
                 case "g":
                     list = acceptWords();
-                    //list is organized largest to smallest, size should be twice the biggest word
-                    size = list.get(0).length() * 2;
+                    //list is organized largest to smallest, size based on the length of the longest and a constant scaler
+                    size = (int) (list.get(0).length() * scale);
                     solution = new char[size][size];
                     wordSearch = new char[size][size];
                     generate(list);
                     System.out.print("Word Search has been generated!");
                     clearOnAcknowledge();
+                    generated = true;
+                    break;
                 //calls the print method to print the word search 
                 case "p":
-                    print();
-                    clearOnAcknowledge();
+                    if(generated){
+                        print();
+                        clearOnAcknowledge();
+                    } else{
+                        System.out.println("Please generate a word search first!");
+                        clearOnAcknowledge();
+                    }
+                    break;
                 //calls the showSolution method to print the word search with the solution visable
                 case "s":
-                    showSolution();
-                    clearOnAcknowledge();
+                    if(generated){
+                        showSolution();
+                        clearOnAcknowledge();
+                    } else{
+                        System.out.println("Please generate a word search first!");
+                        clearOnAcknowledge();
+                    }
+                    break;
                 case "q":
                     //this will close the loop as the while condition is evaluated false
+                    loop = false;
                     continue;
                 default:
                     System.out.print("Sorry input is not recognized...");
                     clearOnAcknowledge();
             }
-        }while(input.toLowerCase() != "q");
+        }while(loop);
         scan.close();
     }
 
+    //prints a quick intro for the user
     private static void printIntro(){
         System.out.println("Welcome to my word search generator!");
         System.out.println("This program will let you generate your own word search puzzle.");
@@ -67,7 +91,6 @@ public class WordSearchGenerator {
         for(String word : wordList){
             addWord(word);
         }
-        wordSearch = solution; 
         //i is the iterator for each row
         for(int i = 0; i < size; i++){
             //j is the iterator for each collumn
@@ -107,28 +130,35 @@ public class WordSearchGenerator {
         for(int i = 0 ; i < 100; i++){
             //selects a direction
             dir = ran.nextInt(3);
-            //prevents word from starting where it will run out of space, random is constrained
             switch(dir){
                 //this case is when the word is downward
                 case 0: 
+                    //prevents word from starting where it will run out of space, random is constrained
                     row = ran.nextInt(size - word.length());
                     col = ran.nextInt(size);
                     if(checkSpace(dir,row,col,word)){
                         //loops through ever char in the word
                         for(char c : word.toCharArray()){
                             //adds char to spot on array and iterates for next loop
+                            wordSearch[col][row] = Character.toUpperCase(c);
                             solution[col][row++] = Character.toUpperCase(c);
                         }
+                        //stops trying once word has been added
+                        return;
                     }
+                    break;
                 //this case the word is left to right
                 case 1: 
                     row = ran.nextInt(size);
                     col = ran.nextInt(size - word.length());
                     if(checkSpace(dir,row,col,word)){
                         for(char c : word.toCharArray()){
+                            wordSearch[col][row] = Character.toUpperCase(c);
                             solution[col++][row] = Character.toUpperCase(c);
                         }
+                        return;
                     }
+                    break;
                 //this case the word is diagonal
                 case 2:  
                     //this constrains the row so it can be be no lower than needed if the word is on the longest diagonal
@@ -136,9 +166,12 @@ public class WordSearchGenerator {
                     col = ran.nextInt(size - word.length() + 1);
                     if(checkSpace(dir,row,col,word)){
                         for(char c : word.toCharArray()){
+                            wordSearch[col][row] = Character.toUpperCase(c);
                             solution[col++][row++] = Character.toUpperCase(c);
                         }
+                        return;
                     }
+                    break;
                 //if dir fails to become a valid direction continue for loop and retry
                 default:
                     continue;
@@ -218,7 +251,8 @@ public class WordSearchGenerator {
             for(int j = 0; j < size; j++){
                 //prints character if it is part of solution else prints "[x]"
                 if(solution[j][i] <= 'Z' && solution[j][i] >= 'A'){
-                    System.out.print("[" + solution[j][i] + "]");
+                    //prints character in red tex so it is easy to identify 
+                    System.out.print("[" + "\u001B[31m" + solution[j][i] + "\u001B[37m" + "]");
                 } else {
                     System.out.print("[X]");
                 }
@@ -229,7 +263,6 @@ public class WordSearchGenerator {
 
     //sorts a word into an already sorted array
     private static ArrayList<String> addSorted(ArrayList<String> list, String word){
-        System.out.println(list);
         //on first word being added for loop wont trigger
         if(list.isEmpty()){
             list.add(word);
@@ -241,10 +274,10 @@ public class WordSearchGenerator {
                 if(list.get(i).length() < word.length()){
                     //adds element inplace, shifts smaller words down one index
                     list.add(i, word);
-                    //break needed to prevent adding word multiple times
                     break;
                 } else if(i < list.size()){
                     list.add(word);
+                    break;
                 }
             }
         }
