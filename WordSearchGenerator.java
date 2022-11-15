@@ -1,3 +1,9 @@
+//WordSearchGenerator is a project by Sean Chambers
+//WordSearchGenerator prints out the resulting word search from the input of several words
+//The word search is scaled up and down based on the number of words that are accepted. 
+
+
+//imports
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Random;
@@ -261,7 +267,8 @@ public class WordSearchGenerator {
         }
     }
 
-    //sorts a word into an already sorted array
+    //sorts a word into an already sorted array, words are sorted longest to shortest
+    //as it is easier to place short words in a full array than long words
     private static ArrayList<String> addSorted(ArrayList<String> list, String word){
         //on first word being added for loop wont trigger
         if(list.isEmpty()){
@@ -284,6 +291,7 @@ public class WordSearchGenerator {
         return list;
     }
 
+    //clears the screen once enter has been pressed.
     private static void clearOnAcknowledge(){
         scan.nextLine();
         for(int i = 0; i < 15; i++){
